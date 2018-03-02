@@ -53,15 +53,34 @@ module ConoStorage
       request(:put, path, io, extra_headers.merge(headers))
     end
 
-    def authorize
-      if @token.nil? || (Time.parse(@token['expires']) <= Time.now)
-        create_token
+    def prepare_token
+      return if cached_token_avaiable?
+      fetch_token
+      File.write(cached_token_path, @token.to_json)
+    end
+
+    def cached_token_path
+      File.join(File.dirname($0), ".#{@tenant_id}-#{@username}")
+    end
+
+    def cached_token_avaiable?
+      return true  if valid_token? @token
+      return false if !File.exist?(cached_token_path)
+
+      token = JSON.parse File.read(cached_token_path)
+      if valid_token? token
+        @token = token
+        true
       else
-        @token
+        false
       end
     end
 
-    def create_token
+    def valid_token?(token)
+      token && Time.parse(token.fetch("expires")) >= Time.now
+    end
+
+    def fetch_token
       res = connection.post do |req|
         req.url @auth_url + '/tokens'
         req.body = auth_params.to_json
@@ -93,7 +112,7 @@ module ConoStorage
     end
 
     def request(request_method, path, params, headers)
-      authorize
+      prepare_token
       Response.new(
         connection.send(
           request_method,
