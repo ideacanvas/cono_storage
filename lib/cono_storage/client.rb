@@ -60,7 +60,7 @@ module ConoStorage
     end
 
     def cached_token_path
-      File.join(File.dirname($0), ".#{@tenant_id}-#{@username}")
+      File.join(File.dirname($0), ".cono_storage.token.#{@tenant_id}-#{@username}")
     end
 
     def cached_token_avaiable?
