@@ -60,7 +60,11 @@ module ConoStorage
     end
 
     def cached_token_path
-      File.join(File.dirname($0), ".cono_storage.token.#{@tenant_id}-#{@username}")
+      if defined?(Rails)
+        File.join(Rails.root, "tmp", "cache", ".cono_storage.token.#{@tenant_id}-#{@username}")
+      else
+        File.join(File.dirname($0), ".cono_storage.token.#{@tenant_id}-#{@username}")
+      end
     end
 
     def cached_token_avaiable?
