@@ -11,7 +11,7 @@ require 'cono_storage'
 
 client = ConoStorage.new(
   # via. https://identity.tyo1.conoha.io/
-  auth_url:  'https://identity.tyo1.conoha.io/v2.0/',
+  auth_url:  'https://identity.tyo1.conoha.io/v2.0',
   tenant_id: 'b7daff9xxxxxxxxxxxxxxxxx',
   username: 1111111,
   password: '^passw0rd$',
